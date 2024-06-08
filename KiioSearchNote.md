@@ -66,8 +66,6 @@ NOW KIIO SEARCH 聚合搜索平台：
 
 3. 后端搜索接口
 
-
-
 #### 项目初始化
 
 前端：脚手架搭构 ： ant design vue --- [快速上手 - Ant Design Vue (antdv.com)](https://www.antdv.com/docs/vue/getting-started-cn)
@@ -75,3 +73,29 @@ NOW KIIO SEARCH 聚合搜索平台：
 后端： spring - init template
 
 http://localhost:8101/api/doc.html#/home
+
+#### tag 导航栏 改造 路由页面同步
+
+url <-------> page 
+
+1. page同步到url ： 用户搜索，点tag 操作的时候改变url地址。 path , query 
+
+2. url同步到page ：route.query , route.param 。。
+
+#### 引入 Axios ， 配拦截器。。
+
+#### [拦截器 | Axios中文文档 | Axios中文网 (axios-http.cn)](https://www.axios-http.cn/docs/interceptors)
+
+#### 快速创建 post ，imgae ， user List 通过 props 传参。
+
+
+
+# 第二期
+
+1. 获取多种不同类型的数据源
+   1. 文章（内部）
+   2. 用户（内部）
+   3. 图片（外部，不是我们自己的项目、自己的用户产生的数据）
+2. 前后端单独的搜索接口联调，跑通整个页面
+3. 分析现有项目的问题 => 优化，聚合接口的开发
+4. （提前安装 ES）
