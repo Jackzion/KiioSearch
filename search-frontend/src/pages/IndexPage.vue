@@ -47,10 +47,9 @@ myAxios.post("/user/list/page/vo", {}).then((res: any) => {
   console.log(res);
   userList.value = res.records;
 });
-// todo : picture controller
-// myAxios.post("/picture/list/page/vo", {}).then((res: any) => {
-//   pictureList.value = res.records;
-// });
+myAxios.post("/picture/list/page/vo", {}).then((res: any) => {
+  pictureList.value = res.records;
+});
 
 const router = useRouter();
 const route = useRoute();

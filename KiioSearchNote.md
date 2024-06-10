@@ -88,8 +88,6 @@ url <-------> page
 
 #### 快速创建 post ，imgae ， user List 通过 props 传参。
 
-
-
 # 第二期
 
 1. 获取多种不同类型的数据源
@@ -99,3 +97,23 @@ url <-------> page
 2. 前后端单独的搜索接口联调，跑通整个页面
 3. 分析现有项目的问题 => 优化，聚合接口的开发
 4. （提前安装 ES）
+
+### 数据源获取(爬虫 ---> post ，imgae )：
+
+- 直接请求数据接口（最方便）HttpClient、OKHttp、RestTemplate、Hutool（[https://hutool.cn）](https://hutool.cn%EF%BC%89)
+
+- 等网页渲染出明文内容后，从前端页面的内容抓取
+
+- 有一些网站可能是动态请求的，他不会一次性加载所有的数据，而是要你点某个按钮、输入某个验证码才会显示出数据。=> 无头浏览器：java：selenium；node.js：puppeteer
+
+#### post 获取 （接口爬虫）：Hutool [https://hutool.cn）](https://hutool.cn%EF%BC%89)
+
+抓取：[编程导航 - 做您编程路上的导航员](https://www.code-nav.cn/learn/passage)
+
+获取到文章后要入库（定时获取或者只获取一次），**离线抓取
+
+#### image 获取（接口爬虫）[jsoup: Java HTML parser, built for HTML editing, cleaning, scraping, and XSS safety](https://jsoup.org/)
+
+抓取：bing image
+
+实时获取，实现接口，每次请求就转发到 bing request ,不在数据库存储
