@@ -4,6 +4,7 @@ import cn.hutool.json.JSONUtil;
 import com.ziio.kiiosearch.model.entity.Picture;
 import com.ziio.kiiosearch.model.entity.Post;
 import com.ziio.kiiosearch.model.entity.User;
+import com.ziio.kiiosearch.model.entity.Video;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
@@ -21,6 +22,8 @@ import java.util.List;
 public class SearchVO implements Serializable {
 
     private List<Picture> pictureList;
+
+    private List<Video> videoList;
 
     private List<PostVO> postList;
 

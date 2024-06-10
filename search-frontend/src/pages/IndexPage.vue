@@ -17,6 +17,9 @@
       <a-tab-pane key="picture" tab="图片" force-render>
         <PictureList :picture-list="pictureList" />
       </a-tab-pane>
+      <a-tab-pane key="video" tab="视频" force-render>
+        <VideoList :video-list="videoList" />
+      </a-tab-pane>
       <a-tab-pane key="user" tab="用户">
         <UserList :user-list="userList" />
       </a-tab-pane>
@@ -29,6 +32,7 @@ import { ref, watchEffect } from "vue";
 import PostList from "@/components/PostList.vue";
 import PictureList from "@/components/PictureList.vue";
 import UserList from "@/components/UserList.vue";
+import VideoList from "@/components/VideoList.vue";
 import MyDivider from "@/components/MyDivider.vue";
 import { useRoute, useRouter } from "vue-router";
 import myAxios from "@/plugins/myAxios";
@@ -41,6 +45,7 @@ const activeKey = route.params.category;
 const postList = ref([]);
 const userList = ref([]);
 const pictureList = ref([]);
+const videoList = ref([]);
 // todo: pageSize ，pageNum 同步到url
 const initSearchParams = {
   text: "",
@@ -62,6 +67,7 @@ const loadData = (params: any) => {
     postList.value = res.postList;
     userList.value = res.userList;
     pictureList.value = res.pictureList;
+    videoList.value = res.videoList;
   });
 };
 
