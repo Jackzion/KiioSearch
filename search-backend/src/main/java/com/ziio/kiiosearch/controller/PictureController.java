@@ -31,7 +31,7 @@ public class PictureController {
         long current = pictureQueryRequest.getCurrent();
         long size = pictureQueryRequest.getPageSize();
         // 限制爬虫
-        ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR.PARAMS_ERROR);
+        ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
         String searchText = pictureQueryRequest.getSearchText();
         Page<Picture> picturePage = pictureService.searchPicture(searchText, current, size);
         return ResultUtils.success(picturePage);

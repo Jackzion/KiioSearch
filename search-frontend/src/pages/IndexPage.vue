@@ -33,38 +33,43 @@ import MyDivider from "@/components/MyDivider.vue";
 import { useRoute, useRouter } from "vue-router";
 import myAxios from "@/plugins/myAxios";
 
-// 初始化数据
-const postList = ref([]);
-const userList = ref([]);
-const pictureList = ref([]);
-
-myAxios.post("/post/list/page/vo", {}).then((res: any) => {
-  console.log(res);
-  postList.value = res.records;
-});
-
-myAxios.post("/user/list/page/vo", {}).then((res: any) => {
-  console.log(res);
-  userList.value = res.records;
-});
-myAxios.post("/picture/list/page/vo", {}).then((res: any) => {
-  pictureList.value = res.records;
-});
-
 const router = useRouter();
 const route = useRoute();
 // 获取动态路由的传参 -- category（搜索栏的text）同步到页面
 const activeKey = route.params.category;
-
+// 初始化数据
+const postList = ref([]);
+const userList = ref([]);
+const pictureList = ref([]);
 // todo: pageSize ，pageNum 同步到url
 const initSearchParams = {
   text: "",
   pageSize: 10,
   pageNum: 1,
 };
-
 const searchParams = ref(initSearchParams);
 
+/**
+ * 统一加载数据 --> 调用后端统一搜索接口
+ * @param params
+ */
+const loadData = (params: any) => {
+  const query = {
+    ...params,
+    searchText: params.text,
+  };
+  myAxios.post("/search/all", query).then((res: any) => {
+    postList.value = res.postList;
+    userList.value = res.userList;
+    pictureList.value = res.pictureList;
+  });
+};
+
+loadData(searchParams.value.text);
+/**
+ * 数据改变的时候， do something
+ * @param value
+ */
 // todo: 有必要吗？ text 直接赋值不也可以进行页面同步
 watchEffect(() => {
   searchParams.value = {
@@ -72,14 +77,20 @@ watchEffect(() => {
     text: route.query.text,
   } as any;
 });
+/**
+ * 搜索
+ * @param value
+ */
 const onSearch = (value: string) => {
   alert(value);
   // 搜索将 searchParams --> url
   router.push({
     query: searchParams.value,
   });
+  loadData(searchParams.value);
 };
 
+// tab 栏变更同步 url
 const onTabChange = (key: string) => {
   router.push({
     // tab栏改变 将 searchParams --> url.query , key --> url.path.category

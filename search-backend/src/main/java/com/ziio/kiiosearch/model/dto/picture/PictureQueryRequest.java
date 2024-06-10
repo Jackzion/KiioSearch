@@ -16,7 +16,7 @@ import java.util.List;
 public class PictureQueryRequest extends PageRequest implements Serializable {
 
     /**
-     *
+     * 搜索条件
      */
     private String SearchText;
 
