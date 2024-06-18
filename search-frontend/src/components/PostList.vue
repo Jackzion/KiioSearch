@@ -1,16 +1,21 @@
 <template>
-  <!--  <img :src="link" class="link" />-->
-  <a-list item-layout="horizontal" :data-source="props.postList">
+  <a-list item-layout="vertical" size="large" :data-source="props.postList">
     <template #renderItem="{ item }">
-      <a-list-item>
-        <a-list-item-meta :description="item.content">
+      <a-list-item key="item.title">
+        <template #extra>
+          <img
+            width="272"
+            alt="logo"
+            src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
+          />
+        </template>
+        <a-list-item-meta :description="item.tags">
           <template #title>
-            <a href="https://www.antdv.com/">{{ item.title }}</a>
+            <a :href="item.href">{{ item.title }}</a>
           </template>
-          <template #avatar>
-            <a-avatar :src="link" />
-          </template>
+          <template #avatar><a-avatar :src="item.avatar" /></template>
         </a-list-item-meta>
+        {{ item.content }}
       </a-list-item>
     </template>
   </a-list>

@@ -145,8 +145,9 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
         long pageSize = postQueryRequest.getPageSize();
         String sortField = postQueryRequest.getSortField();
         String sortOrder = postQueryRequest.getSortOrder();
+        // 设置 bool query -- 组合子查询 and
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
-        // 过滤
+        // 过滤 (必须条件)
         boolQueryBuilder.filter(QueryBuilders.termQuery("isDelete", 0));
         if (id != null) {
             boolQueryBuilder.filter(QueryBuilders.termQuery("id", id));
@@ -189,7 +190,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
             boolQueryBuilder.should(QueryBuilders.matchQuery("content", content));
             boolQueryBuilder.minimumShouldMatch(1);
         }
-        // 排序
+        // 根据自定义 sortOrder（desc or asc） and sortFiled（字段名） 构造排序器
         SortBuilder<?> sortBuilder = SortBuilders.scoreSort();
         if (StringUtils.isNotBlank(sortField)) {
             sortBuilder = SortBuilders.fieldSort(sortField);
@@ -200,6 +201,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
         // 构造查询
         NativeSearchQuery searchQuery = new NativeSearchQueryBuilder().withQuery(boolQueryBuilder)
                 .withPageable(pageRequest).withSorts(sortBuilder).build();
+        // 使用 elasticsearchRestTemplate 组合条件 ， 更灵活
         SearchHits<PostEsDTO> searchHits = elasticsearchRestTemplate.search(searchQuery, PostEsDTO.class);
         Page<Post> page = new Page<>();
         page.setTotal(searchHits.getTotalHits());
@@ -209,7 +211,9 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
             List<SearchHit<PostEsDTO>> searchHitList = searchHits.getSearchHits();
             List<Long> postIdList = searchHitList.stream().map(searchHit -> searchHit.getContent().getId())
                     .collect(Collectors.toList());
+            // 根据 id 得到 数据库的全数据
             List<Post> postList = baseMapper.selectBatchIds(postIdList);
+            // 数据同步 ： 将 postIdList（elastic） 上不存在于 postList（mysql） 的数据删除
             if (postList != null) {
                 Map<Long, List<Post>> idPostMap = postList.stream().collect(Collectors.groupingBy(Post::getId));
                 postIdList.forEach(postId -> {

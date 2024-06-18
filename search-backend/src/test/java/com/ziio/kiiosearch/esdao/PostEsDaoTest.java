@@ -38,6 +38,7 @@ public class PostEsDaoTest {
         System.out.println(page);
     }
 
+    // page request test
     @Test
     void testSelect() {
         System.out.println(postEsDao.count());
@@ -47,6 +48,7 @@ public class PostEsDaoTest {
         System.out.println(postList);
     }
 
+    // repository test
     @Test
     void testAdd() {
         PostEsDTO postEsDTO = new PostEsDTO();

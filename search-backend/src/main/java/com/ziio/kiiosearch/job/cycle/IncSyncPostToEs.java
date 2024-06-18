@@ -31,17 +31,18 @@ public class IncSyncPostToEs {
     private PostEsDao postEsDao;
 
     /**
-     * 每分钟执行一次
+     * 增量同步,每分钟执行一次，
      */
     @Scheduled(fixedRate = 60 * 1000)
     public void run() {
         // 查询近 5 分钟内的数据
         Date fiveMinutesAgoDate = new Date(new Date().getTime() - 5 * 60 * 1000L);
         List<Post> postList = postMapper.listPostWithDelete(fiveMinutesAgoDate);
-        if (CollUtil.isEmpty(postList)) {
+        if (postList.isEmpty()) {
             log.info("no inc post");
             return;
         }
+        // 转化为 esDTO
         List<PostEsDTO> postEsDTOList = postList.stream()
                 .map(PostEsDTO::objToDto)
                 .collect(Collectors.toList());
@@ -51,6 +52,7 @@ public class IncSyncPostToEs {
         for (int i = 0; i < total; i += pageSize) {
             int end = Math.min(i + pageSize, total);
             log.info("sync from {} to {}", i, end);
+            // 插入 es
             postEsDao.saveAll(postEsDTOList.subList(i, end));
         }
         log.info("IncSyncPostToEs end, total {}", total);

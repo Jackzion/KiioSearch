@@ -8,6 +8,7 @@ import com.ziio.kiiosearch.model.entity.Post;
 import com.ziio.kiiosearch.service.PostService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 // 取消 @Component 注释后, 每次启动 SpringBoot 项目会执行一次 run 方法
-//@Component
+@Component
 @Slf4j
 public class FetchInitPostList implements CommandLineRunner {
 
@@ -25,8 +26,8 @@ public class FetchInitPostList implements CommandLineRunner {
     @Override
     public void run(String... args) {
         // 发送请求
-        String json = "{\"pageSize\":8,\"sortOrder\":\"descend\",\"sortField\":\"priority\",\"tags\":[],\"reviewStatus\":1,\"current\":1}";
-        String url = "https://api.code-nav.cn/api/essay/list/page/vo";
+        String json = "{\"pageSize\":12,\"sortOrder\":\"descend\",\"sortField\":\"priority\",\"tags\":[],\"current\":1,\"reviewStatus\":1,\"category\":\"文章\",\"hiddenContent\":true}";
+        String url = "https://api.code-nav.cn/api/post/list/page/vo";
         String result = HttpRequest
                 .post(url)
                 .body(json)

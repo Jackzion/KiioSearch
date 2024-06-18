@@ -206,5 +206,42 @@ public class CrawlerTest {
         return ;
     }
 
+    @Test
+     void postGetTest(){
+        // 发送请求
+        String json = "{\"pageSize\":10,\"sortOrder\":\"descend\",\"sortField\":\"priority\",\"tags\":[],\"reviewStatus\":1,\"current\":1}";
+        String url = "https://api.code-nav.cn/api/essay/list/page/vo";
+        String result = HttpRequest
+                .post(url)
+                .body(json)
+                .execute()
+                .body();
+        // json 解析 response
+        Map<String, Object> map = JSONUtil.toBean(result, Map.class);
+        JSONObject data = (JSONObject) map.get("data");
+        JSONArray records = (JSONArray) data.get("records");
+        if (records == null) {
+            return;
+        }
+        // 封装成 PostList
+        List<Post> postList = new ArrayList<>();
+        for (Object record : records) {
+            JSONObject tempRecord = (JSONObject) record;
+            if (tempRecord == null) {
+                return;
+            }
+            // 封装成 Post
+            Post post = new Post();
+            post.setTitle(tempRecord.getStr("title"));
+            post.setContent(tempRecord.getStr("content"));
+            JSONArray tags = (JSONArray) tempRecord.get("tags");
+            List<String> tagList = tags.toList(String.class);
+            post.setTags(JSONUtil.toJsonStr(tagList));
+            post.setUserId(1L);
+            postList.add(post);
+        }
+        // 数据库入库
+        postService.saveBatch(postList);
+    }
 
 }
