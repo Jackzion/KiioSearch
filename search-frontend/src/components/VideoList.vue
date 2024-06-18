@@ -6,12 +6,14 @@
   >
     <template #renderItem="{ item }">
       <a-list-item>
-        <a-card hoverable>
-          <template #cover>
-            <img alt="example" :src="item.imageUrl" />
-          </template>
-          <a-card-meta :title="item.title" />
-        </a-card>
+        <a :href="item.originUrl">
+          <a-card hoverable>
+            <template #cover>
+              <img alt="example" :src="item.imageUrl" />
+            </template>
+            <a-card-meta :title="item.title" />
+          </a-card>
+        </a>
       </a-list-item>
     </template>
   </a-list>

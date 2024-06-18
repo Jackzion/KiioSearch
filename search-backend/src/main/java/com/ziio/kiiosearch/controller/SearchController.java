@@ -15,6 +15,7 @@ import com.ziio.kiiosearch.service.PictureService;
 import com.ziio.kiiosearch.service.PostService;
 import com.ziio.kiiosearch.service.UserService;
 import com.ziio.kiiosearch.service.VideoService;
+import com.ziio.kiiosearch.utils.SearchFacade;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,16 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 public class SearchController {
 
     @Resource
-    private UserService userService;
-
-    @Resource
-    private PostService postService;
-
-    @Resource
-    private PictureService pictureService;
-
-    @Resource
-    private VideoService videoService;
+    private SearchFacade searchFacade;
 
     /**
      * 统一搜索请求
@@ -49,29 +41,12 @@ public class SearchController {
      */
     @PostMapping("/all")
     public BaseResponse<SearchVO> searchAll(@RequestBody SearchRequest searchRequest, HttpServletRequest request) {
-        String searchText = searchRequest.getSearchText();
-        // 搜索图片
-        Page<Picture> picturePage = pictureService.searchPicture(searchText, 1, 30);
-
-        // 搜索视频
-        Page<Video> videoPage = videoService.searchVideo(searchText, 1, 7);
-
-        // 搜索用户
-        UserQueryRequest userQueryRequest = new UserQueryRequest();
-        userQueryRequest.setUserName(searchText);
-        Page<UserVO> userVOPage = userService.listUserVOByPage(userQueryRequest);
-        // 搜索文章
-        PostQueryRequest postQueryRequest = new PostQueryRequest();
-        postQueryRequest.setSearchText(searchText);
-        Page<PostVO> postVOPage = postService.listPostVOByPage(postQueryRequest, request);
-
-        SearchVO searchVO = new SearchVO();
-        searchVO.setUserList(userVOPage.getRecords());
-        searchVO.setPostList(postVOPage.getRecords());
-        searchVO.setPictureList(picturePage.getRecords());
-        searchVO.setVideoList(videoPage.getRecords());
+        String type = searchRequest.getType();
+        SearchVO searchVO = searchFacade.searchAll(searchRequest, request);
         return ResultUtils.success(searchVO);
-    }
+        }
+
+        
 //    并发查询。。。更慢了
 //    @PostMapping("/all")
 //    public BaseResponse<SearchVO> searchAll(@RequestBody SearchRequest searchRequest, HttpServletRequest request) {

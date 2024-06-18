@@ -29,5 +29,11 @@ public class SearchVO implements Serializable {
 
     private List<UserVO> userList;
 
+    private List<?> dataList;
+
     private static final long serialVersionUID = 1L;
+
+    public void setDataList(List<?> records) {
+        this.dataList = records;
+    }
 }

@@ -117,3 +117,87 @@ url <-------> page
 抓取：bing image
 
 实时获取，实现接口，每次请求就转发到 bing request ,不在数据库存储
+
+# 第三期
+
+1. 聚合接口优化（支持前端更灵活的数据）
+2. 从 0 开始学习 Elastic Stack（Elasticsearch）
+3. 学习数据同步，怎么把一个数据库内的数据同步到其他数据库
+
+## 聚合接口优化
+
+怎么样能让前端又能一次搜出所有数据，又能够分别获取某一类数据（比如分页场景）
+
+新增：前端传 type 调用后端同一个接口, 后端根据 type 调用不同的 service 查询
+比如：type = user => userService.query
+
+1. 如果 type 为空，那么搜索出所有的数据
+2. 如果 type 不为空
+   1. 如果 type 合法，那么查出对应数据
+   2. 否则报错
+
+优化问题？ --- 后端 if 语句太多 ,
+
+### 门面模式
+
+帮助我们用户（客户端）去更轻松的实现功能，不需要关心门面背后的细节。
+
+聚合搜索类业务基本就是门面模式：即前端不用关心后端从哪里、怎么去取不同来源、怎么去聚合不同来源的数据，更方便的获取到内容。
+
+补充：当调用你系统（接口）的客户端觉得麻烦的时候，你就应该思考，是不是可以抽象一个门面了。
+
+#### 图解
+
+![image20230325120636868](https://typora-1313423481.cos.ap-guangzhou.myqcloud.com/typora/image-20230325120636868.png)
+
+#### 解决：将 搜索 type 的 if 语句 ，提出一层 ，作为门面。
+
+但又会引出新问题 --- 拓展性差 ， 新的 type 会统一添加修改多个模块
+
+### 适配器模式
+
+1. 定制统一的数据源接入规范（标准）：什么数据源允许接入？你的数据源接入时要满足什么要求？要做什么事情？
+
+**任何接入我们系统的数据，它必须要能够根据关键词搜索、并且支持分页搜索**
+
+声明接口来定义规范
+
+2. 假如我们的数据源已经支持了搜索，但是原有的方法参数和我们的规范不一致，怎么办？
+
+适配器模式的作用：通过转换，让两个系统能够完成对接
+
+### 注册器模式（本质也是单例）
+
+提起通过一个 map 或者其他类型存储好后面需要调用的对象。
+
+#### 解决：使用两模式，对 dataSource进行抽象 ， 然后 通过 map注册不同类型的 dataSource 进行注册和使用。。类似于 BeanRegister
+
+## 搜索优化
+
+问题：搜索不够灵活！！！
+
+比如搜“鱼皮rapper” 无法搜到 “鱼皮是rapper”，因为数据库的 like 是包含查询。
+
+需要分词
+
+## Elastic Stack（一套技术栈）
+
+官网：[Elastic — The Search AI Company | Elastic](https://www.elastic.co/cn/)
+
+包含了数据的整合 => 提取 => 存储 => 使用，一整套！
+
+beats：从各种不同类型的文件 / 应用来 采集数据 a,b,c,d,e,aa,bb,cc
+
+Logstash：从多个采集器或数据源抽取 / 转换数据，向 es 输送 aa,bb,cc
+
+elasticsearch：存储、查询数据
+
+kibana：可视化 es 的数据
+
+### 安装 ES
+
+elasticsearch：[Set up Elasticsearch | Elasticsearch Guide [7.17] | Elastic](https://www.elastic.co/guide/en/elasticsearch/reference/7.17/setup.html)
+
+kibana：[Kibana—your window into Elastic | Kibana Guide [7.17] | Elastic](https://www.elastic.co/guide/en/kibana/7.17/introduction.html)
+
+**只要是一套技术，所有版本必须一致！！！此处用 7.17
